@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import datetime
 import dateutil.relativedelta
+import json
 
 DROP_COLUMNS = ['blurb', 'converted_pledged_amount', 'currency', 'currency_symbol', 'currency_trailing_code', 'current_currency', 'disable_communication', 'friends', 'fx_rate', 'is_backing', 'is_starrable', 'is_starred', 'location', 'name', 'permissions', 'photo', 'profile', 'slug', 'source_url', 'spotlight', 'static_usd_rate', 'urls', 'usd_pledged', 'usd_type']
 def remove_columns(c, cols=DROP_COLUMNS):
@@ -12,6 +13,20 @@ def remove_columns(c, cols=DROP_COLUMNS):
 		c.drop(cols, axis=1, inplace=True) #drop the entire column axis = 1 indicates a column 
 		c.to_csv(name, index = False)
 	except Exception, err: 
+		print Exception, err
+
+def parse_json_category(c):
+	print 'FUNC :- Get Json field:'
+	try:
+		c = pd.read_csv(c, error_bad_lines=False)
+		for index, row in c.iterrows():
+			blob = row['category']
+			json_data = json.loads(blob)
+			slug = json_data['slug']
+			sep_slug = slug.split('/')
+			print sep_slug[0].replace(" ", "_")
+			c.to_csv()
+	except Exception, err:
 		print Exception, err
 
 def create_lifetime_in_days(c):
@@ -25,7 +40,7 @@ def create_lifetime_in_days(c):
 			deadline = datetime.datetime.fromtimestamp(row['deadline'])
 			launched_at = datetime.datetime.fromtimestamp(row['launched_at'])
 			lifetime_in_days = dateutil.relativedelta.relativedelta(deadline, launched_at)
-			print lifetime_in_days
+			#print lifetime_in_days
 			daysToAdd = 0
 			daysToAdd += lifetime_in_days.years * 365 #convert years to days
 			daysToAdd += lifetime_in_days.months * 30 #convert months to days  
@@ -49,7 +64,7 @@ def create_until_state_changed_in_days(c):
 			state_changed = datetime.datetime.fromtimestamp(row['state_changed_at']) #grab state_changed_at timestamp
 			launched_at = datetime.datetime.fromtimestamp(row['launched_at']) #grab launched_at timestamp
 			until_state_changed_in_days = dateutil.relativedelta.relativedelta(state_changed, launched_at) #subtract the two timestamps. Output is in years, months, days, minutes
-			print until_state_changed_in_days
+			#print until_state_changed_in_days
 			daysToAdd = 0
 			daysToAdd = until_state_changed_in_days.years * 365 #convert years to days
 			daysToAdd += until_state_changed_in_days.months * 30 #convert months to days  
@@ -79,6 +94,7 @@ def main():
 		create_lifetime_in_days(CSV)
 		create_until_state_changed_in_days(CSV)
 		remove_columns(CSV, ['state_changed_at', 'launched_at', 'deadline'])
+		parse_json_category(CSV)
 		print "Completed ", CSV 
 	
 if __name__ == "__main__":
