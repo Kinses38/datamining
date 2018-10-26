@@ -16,7 +16,8 @@ def remove_columns(c, cols=DROP_COLUMNS):
 		print Exception, err
 
 def parse_json_category(c):
-	print 'FUNC :- Get Json field:'
+	name = c
+	print 'FUNC :- Get Json field:', name
 	try:
 		c = pd.read_csv(c, error_bad_lines=False)
 		for index, row in c.iterrows():
@@ -24,8 +25,10 @@ def parse_json_category(c):
 			json_data = json.loads(blob)
 			slug = json_data['slug']
 			sep_slug = slug.split('/')
-			print sep_slug[0].replace(" ", "_")
-			c.to_csv()
+			#print row['category']
+			row['category'] = sep_slug[0].replace(" ", "_")
+			print row['category']
+		c.to_csv(name, index=False)
 	except Exception, err:
 		print Exception, err
 
@@ -91,9 +94,9 @@ def main():
 	#Remove the rubbish columns
 	for CSV in CSV_files:
 		remove_columns(CSV)
-		create_lifetime_in_days(CSV)
-		create_until_state_changed_in_days(CSV)
-		remove_columns(CSV, ['state_changed_at', 'launched_at', 'deadline'])
+		#create_lifetime_in_days(CSV)
+		#create_until_state_changed_in_days(CSV)
+		#remove_columns(CSV, ['state_changed_at', 'launched_at', 'deadline'])
 		parse_json_category(CSV)
 		print "Completed ", CSV 
 	
