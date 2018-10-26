@@ -15,19 +15,19 @@ def remove_columns(c, cols=DROP_COLUMNS):
 	except Exception, err: 
 		print Exception, err
 
-def parse_json_category(c):
+def parse_json_category(c, column_name, field):
 	name = c
 	print 'FUNC :- Get Json field:', name
 	try:
 		c = pd.read_csv(c, error_bad_lines=False)
 		for index, row in c.iterrows():
-			blob = row['category']
+			blob = row[column_name]
 			json_data = json.loads(blob)
-			slug = json_data['slug']
+			slug = json_data[field]
 			sep_slug = slug.split('/')
-			#print row['category']
-			row['category'] = sep_slug[0].replace(" ", "_")
-			print row['category']
+			joined_slug = sep_slug[0].replace(" ", "_") #Category and names are working, unfortunately some of the name fields have inner quotes which breaks shit
+			print joined_slug
+			c.loc[c.index[index], column_name] = joined_slug
 		c.to_csv(name, index=False)
 	except Exception, err:
 		print Exception, err
@@ -94,10 +94,11 @@ def main():
 	#Remove the rubbish columns
 	for CSV in CSV_files:
 		remove_columns(CSV)
-		#create_lifetime_in_days(CSV)
-		#create_until_state_changed_in_days(CSV)
-		#remove_columns(CSV, ['state_changed_at', 'launched_at', 'deadline'])
-		parse_json_category(CSV)
+		create_lifetime_in_days(CSV)
+		create_until_state_changed_in_days(CSV)
+		remove_columns(CSV, ['state_changed_at', 'launched_at', 'deadline'])
+		parse_json_category(CSV, 'category', 'slug')
+		parse_json_category(CSV, 'creator', 'name')
 		print "Completed ", CSV 
 	
 if __name__ == "__main__":
