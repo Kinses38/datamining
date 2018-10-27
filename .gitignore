@@ -2,3 +2,4 @@
 *.csv
 venv/
 .~lock*
+Kickstarter/
