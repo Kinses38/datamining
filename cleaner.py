@@ -1,9 +1,10 @@
-import pandas as pd
-import os
 import datetime
-import dateutil.relativedelta
 import json
+import os
 import time
+
+import dateutil.relativedelta
+import pandas as pd
 
 DROP_COLUMNS = ['blurb', 'converted_pledged_amount', 'currency', 'currency_symbol', 'currency_trailing_code',
                 'current_currency', 'disable_communication', 'friends', 'fx_rate', 'is_backing', 'is_starrable',
@@ -48,7 +49,8 @@ def parse_json_creator(c):
         for index, row in c.iterrows():
             blob = row['creator']
             pre_creator = blob.split("name\":")[1]
-            creator = pre_creator.split("\",\"")[0].replace("\"", "")
+            creator = pre_creator.split("\",\"")[0].replace("\"", "").replace(" ", "_").replace("'", "")
+            
             # print creator
             c.loc[c.index[index], 'creator'] = creator
         c.to_csv(name, index=False)
