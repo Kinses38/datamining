@@ -50,7 +50,7 @@ def parse_json_creator(c):
             blob = row['creator']
             pre_creator = blob.split("name\":")[1]
             creator = pre_creator.split("\",\"")[0].replace("\"", "").replace(" ", "_").replace("'", "")
-            
+
             # print creator
             c.loc[c.index[index], 'creator'] = creator
         c.to_csv(name, index=False)
@@ -82,6 +82,7 @@ def create_lifetime_in_days(c):
     except Exception, err:
         print Exception, err
 
+
 def classify_created_at(c):
     cols = ['created_at']
     name = c
@@ -92,24 +93,41 @@ def classify_created_at(c):
         c['year_created_at'] = ''
         for index, row in c.iterrows():
             created_at = datetime.datetime.fromtimestamp(row['created_at'])
-	    created_at = str(created_at).split("-")
+            created_at = str(created_at).split("-")
 
-	    #Creating season quartile	
-	    if int(created_at[1]) < 4:
-            	c.loc[c.index[index], 'quarter_created_at'] = 1
-	    elif int(created_at[1]) < 7:
-            	c.loc[c.index[index], 'quarter_created_at'] = 2
-	    elif int(created_at[1]) < 10:
-            	c.loc[c.index[index], 'quarter_created_at'] = 3
-	    elif int(created_at[1]) < 13: 
-            	c.loc[c.index[index], 'quarter_created_at'] = 4
-	    else:
-            	c.loc[c.index[index], 'quarter_created_at'] = "ERROR!"
-		
-	    #fill year_created_at
+            # Creating season quartile
+            if int(created_at[1]) < 4:
+                c.loc[c.index[index], 'quarter_created_at'] = 1
+            elif int(created_at[1]) < 7:
+                c.loc[c.index[index], 'quarter_created_at'] = 2
+            elif int(created_at[1]) < 10:
+                c.loc[c.index[index], 'quarter_created_at'] = 3
+            elif int(created_at[1]) < 13:
+                c.loc[c.index[index], 'quarter_created_at'] = 4
+            else:
+                c.loc[c.index[index], 'quarter_created_at'] = "ERROR!"
+
+            # fill year_created_at
             c.loc[c.index[index], 'year_created_at'] = created_at[0]
-		 	
-    	c.to_csv(name, index=False)
+
+        c.to_csv(name, index=False)
+    except Exception, err:
+        print Exception, err
+
+def get_target_goal_percent(c):
+    name = c
+    print 'FUNC :- Converting Pledged to P/G at CSV:', name
+    try:
+        c = pd.read_csv(c, error_bad_lines=False)
+        for index, row in c.iterrows():
+            goal =  row['goal']
+            pledged = row['pledged']
+            p_over_g = pledged / goal
+            #to two sign decimal places
+            formatted_p_over_g = "{:.2f}".format(p_over_g * 100)
+            c.loc[c.index[index], 'pledged'] = formatted_p_over_g
+        c.rename(columns={'pledged':'Pledged %'}, inplace=True  )
+        c.to_csv(name, index=False)
     except Exception, err:
         print Exception, err
 
@@ -128,10 +146,11 @@ def main():
     for CSV in CSV_files:
         remove_columns(CSV)
         create_lifetime_in_days(CSV)
-	classify_created_at(CSV)
+        classify_created_at(CSV)
         remove_columns(CSV, ['created_at', 'state_changed_at', 'launched_at', 'deadline'])
         parse_json_category(CSV, 'category', 'slug')
         parse_json_creator(CSV)
+        get_target_goal_percent(CSV)
         print "Completed ", CSV
     end = time.time()
     print "Total time: ", end - start
