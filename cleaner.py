@@ -126,10 +126,23 @@ def get_target_goal_percent(c):
             #to two sign decimal places
             formatted_p_over_g = "{:.2f}".format(p_over_g * 100)
             c.loc[c.index[index], 'pledged'] = formatted_p_over_g
-        c.rename(columns={'pledged':'Pledged %'}, inplace=True  )
+        c.rename(columns={'pledged':'pledged %'}, inplace=True  )
         c.to_csv(name, index=False)
     except Exception, err:
+        print Exception,
+
+def calculate_var_mean_std(c, column_name):
+    #This should be calculating a master csv file of all our training data.
+    name = c
+    print 'FUNC :- Calculating Variance: '
+    try:
+        c = pd.read_csv(c, error_bad_lines=False)
+        stats = pd.DataFrame([c[column_name].var(), c[column_name].mean(), c[column_name].std()], index=['Variance', 'Mean', 'Standard Dev'])
+        pd.set_option('display.float_format', lambda x: '%.3f' % x)
+        print (stats.to_string())
+    except Exception, err:
         print Exception, err
+
 
 def main():
     # Get the list of CSV's in the current directory
@@ -151,6 +164,7 @@ def main():
         parse_json_category(CSV, 'category', 'slug')
         parse_json_creator(CSV)
         get_target_goal_percent(CSV)
+        print calculate_var_mean_std(CSV, 'pledged %')
         print "Completed ", CSV
     end = time.time()
     print "Total time: ", end - start
