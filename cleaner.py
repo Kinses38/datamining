@@ -5,6 +5,7 @@ import datetime
 import dateutil.relativedelta
 import json
 import time
+import glob
 
 DROP_COLUMNS = ['blurb', 'converted_pledged_amount', 'currency', 'currency_symbol', 'currency_trailing_code',
                 'current_currency', 'disable_communication', 'friends', 'fx_rate', 'is_backing', 'is_starrable',
@@ -154,30 +155,36 @@ def filter_success_failed(c):
     except Exception, err:
         print Exception, err
 
+def append_all_csv(path):
+    print 'FUNC :- Appending all csvs in directory: ', path
+    try:
+       all_csv = glob.glob(os.path.join(path, "*.csv"))
+       if 'Master.csv' in all_csv:
+           all_csv.remove('Master.csv')
+           os.remove('Master.csv')
+       df_from_each_file = (pd.read_csv(f) for f in all_csv)
+       concat_df = pd.concat(df_from_each_file, ignore_index=False, sort=False)
+       concat_df.to_csv('Master.csv', index=False)
+    except Exception, err:
+        print Exception, err
+
 def main():
-    # Get the list of CSV's in the current directory
-    cDir_files = os.listdir(".")
-    CSV_files = []
-    for item in cDir_files:
-        if ".csv" in item:
-            # TESTING: and "test" in item and "$" not in item:
-            CSV_files.append(item)
-    del cDir_files
+
 
     start = time.time()
     # Remove the rubbish columns
-    for CSV in CSV_files:
-        remove_columns(CSV)
-        create_lifetime_in_days(CSV)
-        classify_created_at(CSV)
-        remove_columns(CSV, ['created_at', 'state_changed_at', 'launched_at', 'deadline'])
-        parse_json_category(CSV, 'category', 'slug')
-        parse_json_creator(CSV)
-        get_target_goal_percent(CSV)
-        #Can change where we want to do this, maybe we want stats on cancelled etc, to see how they skewed us
-        filter_success_failed(CSV)
-        print calculate_var_mean_std(CSV, 'pledged %')
-        print "Completed ", CSV
+    append_all_csv(".")
+    remove_columns('Master.csv')
+    create_lifetime_in_days('Master.csv')
+    classify_created_at('Master.csv')
+    remove_columns('Master.csv', ['created_at', 'state_changed_at', 'launched_at', 'deadline'])
+    parse_json_category('Master.csv', 'category', 'slug')
+    parse_json_creator('Master.csv')
+    get_target_goal_percent('Master.csv')
+    #Can change where we want to do this, maybe we want stats on cancelled etc, to see how they skewed us
+    filter_success_failed('Master.csv')
+    print calculate_var_mean_std('Master.csv', 'pledged %')
+    print "Completed ", 'Master.csv'
     end = time.time()
     print "Total time: ", end - start
 

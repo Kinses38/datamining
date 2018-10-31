@@ -3,3 +3,4 @@
 venv/
 .~lock*
 Kickstarter/
+*.bkup
