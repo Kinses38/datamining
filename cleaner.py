@@ -143,6 +143,16 @@ def calculate_var_mean_std(c, column_name):
     except Exception, err:
         print Exception, err
 
+def filter_success_failed(c):
+    print 'FUNC :- Filter by success and failed: ', c
+    name = c
+    drop_list = ['suspended', 'canceled', 'live']
+    try:
+        c = pd.read_csv(c, error_bad_lines=False)
+        c = c[~c['state'].isin(drop_list)]
+        c.to_csv(name, index=False)
+    except Exception, err:
+        print Exception, err
 
 def main():
     # Get the list of CSV's in the current directory
@@ -164,6 +174,8 @@ def main():
         parse_json_category(CSV, 'category', 'slug')
         parse_json_creator(CSV)
         get_target_goal_percent(CSV)
+        #Can change where we want to do this, maybe we want stats on cancelled etc, to see how they skewed us
+        filter_success_failed(CSV)
         print calculate_var_mean_std(CSV, 'pledged %')
         print "Completed ", CSV
     end = time.time()
