@@ -1,5 +1,5 @@
 .idea
-*.csv
+
 venv/
 .~lock*
 Kickstarter/

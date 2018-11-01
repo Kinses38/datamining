@@ -176,7 +176,7 @@ def main():
     append_all_csv(".")
     remove_columns('Master.csv')
     create_lifetime_in_days('Master.csv')
-    classify_created_at('Master.csv')
+    classify_created_at(    'Master.csv')
     remove_columns('Master.csv', ['created_at', 'state_changed_at', 'launched_at', 'deadline'])
     parse_json_category('Master.csv', 'category', 'slug')
     parse_json_creator('Master.csv')
