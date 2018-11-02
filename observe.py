@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import time
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 COLUMNS_TO_OBSERVE = ["pledged %", "lifetime_in_days", "backers_count", "goal"]
 
@@ -69,9 +70,9 @@ def display_boxplot():
     # df.boxplot(by='state', column='lifetime_in_days', grid=True)
     # df.boxplot(by='category', column='backers_count', grid=True)
     # df.boxplot(by='category', column='goal', grid=True)
-    df.boxplot(by='state', column='goal', grid=True)
-    #df.boxplot(by='category', column='state', grid=True)
-
+    # df.boxplot(by='state', column='goal', grid=True)
+    # df.boxplot(by='category', column='state', grid=True)
+    sns.boxplot(x="category", y="pledged %", data=df)
     plt.show()
 	
 
