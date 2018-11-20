@@ -8,7 +8,7 @@ COLUMNS_TO_OBSERVE = ["pledged %", "lifetime_in_days", "backers_count", "goal"]
 
 
 def observe():
-    df = pd.read_csv("Deduped_Master.csv", error_bad_lines=False) #capture data frame
+    df = pd.read_csv("Deduped_Master.csv", error_bad_lines=False)  # capture data frame
     master_length = len(df.index)
     print "FUNC := observe \nDeduped_Master.csv row count: ", master_length
     results = {}
@@ -28,13 +28,15 @@ def observe():
         stats = pd.DataFrame([df[col].min(), df[col].max(), (df[col].max() - df[col].min()), df[col].mean(),
                               df[col].median(), df[col].quantile(0.25), df[col].quantile(0.5), df[col].quantile(0.75),
                               df[col].quantile(1), (df[col].quantile(0.75) - df[col].quantile(0.25)), df[col].std(),
-                              df[col].var()], index=["Min: ", "Max: ", "Range: ",  "Mean: ", "Median: ", "Q1: ", "Q2: ", "Q3: ",
-                                                     "Q4: ", "IQR: ",  "STD: ", "Variance: "])
+                              df[col].var()],
+                             index=["Min: ", "Max: ", "Range: ", "Mean: ", "Median: ", "Q1: ", "Q2: ", "Q3: ",
+                                    "Q4: ", "IQR: ", "STD: ", "Variance: "])
         pd.options.display.float_format = '{0:,.2f}'.format
         print ("Atrribute: " + col)
         print (stats.to_string())
         print "\n"
     # return results
+
 
 def output_to_file(data_dict, flag):
     print "FUNC := output_to_file"
@@ -46,7 +48,7 @@ def output_to_file(data_dict, flag):
                 f.write(str(key))
                 f.write("!!--\n")
                 f.write("\nMin value: ")
-                f.write(str (values["min"]))
+                f.write(str(values["min"]))
                 f.write("\nMax value: ")
                 f.write(str(values["max"]))
                 f.write("\nRange of attr: ")
@@ -69,8 +71,9 @@ def output_to_file(data_dict, flag):
                 f.write(str(values["Q3"] - values["Q1"]))
     return
 
+
 def display_boxplot():
-    df = pd.read_csv("Deduped_Master.csv", error_bad_lines=False) #capture data frame
+    df = pd.read_csv("Deduped_Master.csv", error_bad_lines=False)  # capture data frame
     # df.plot.box(vert=False, column=["pledged %", "state"])
     # df.boxplot(by='state', column = 'pledged %', grid=True)
     # df.boxplot(by='category', column='pledged %', grid=True)
@@ -82,7 +85,7 @@ def display_boxplot():
     # df.boxplot(by='category', column='state', grid=True)
     sns.boxplot(x="category", y="pledged %", data=df)
     plt.show()
-	
+
 
 def main():
     dispersal = True
@@ -104,14 +107,15 @@ def main():
     if dispersal:
         print "Running in disperal mode"
         observe()
-        #output_to_file(observe(), "dispersal")
+        # output_to_file(observe(), "dispersal")
     elif display:
-        print "Displaying boxplot" 
+        print "Displaying boxplot"
         display_boxplot()
     elif remove_dups:
         df = pd.read_csv("Master.csv", error_bad_lines=False)
         df = df.drop_duplicates(subset='id', keep='first', inplace=False)
         df.to_csv('Deduped_Master.csv', index=False)
+
 
 if __name__ == "__main__":
     main()
