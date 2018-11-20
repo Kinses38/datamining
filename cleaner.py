@@ -115,34 +115,38 @@ def classify_created_at(c):
     except Exception, err:
         print Exception, err
 
+
 def get_target_goal_percent(c):
     name = c
     print 'FUNC :- Converting Pledged to P/G at CSV:', name
     try:
         c = pd.read_csv(c, error_bad_lines=False)
         for index, row in c.iterrows():
-            goal =  row['goal']
+            goal = row['goal']
             pledged = row['pledged']
             p_over_g = pledged / goal
-            #to two sign decimal places
+            # to two sign decimal places
             formatted_p_over_g = "{:.2f}".format(p_over_g * 100)
             c.loc[c.index[index], 'pledged'] = formatted_p_over_g
-        c.rename(columns={'pledged':'pledged %'}, inplace=True  )
+        c.rename(columns={'pledged': 'pledged %'}, inplace=True)
         c.to_csv(name, index=False)
     except Exception, err:
         print Exception,
 
+
 def calculate_var_mean_std(c, column_name):
-    #This should be calculating a master csv file of all our training data.
+    # This should be calculating a master csv file of all our training data.
     name = c
     print 'FUNC :- Calculating Variance: '
     try:
         c = pd.read_csv(c, error_bad_lines=False)
-        stats = pd.DataFrame([c[column_name].var(), c[column_name].mean(), c[column_name].std()], index=['Variance', 'Mean', 'Standard Dev'])
+        stats = pd.DataFrame([c[column_name].var(), c[column_name].mean(), c[column_name].std()],
+                             index=['Variance', 'Mean', 'Standard Dev'])
         pd.set_option('display.float_format', lambda x: '%.3f' % x)
         print (stats.to_string())
     except Exception, err:
         print Exception, err
+
 
 def filter_success_failed(c):
     print 'FUNC :- Filter by success and failed: ', c
@@ -155,33 +159,33 @@ def filter_success_failed(c):
     except Exception, err:
         print Exception, err
 
+
 def append_all_csv(path):
     print 'FUNC :- Appending all csvs in directory: ', path
     try:
-       all_csv = glob.glob(os.path.join(path, "*.csv"))
-       if 'Master.csv' in all_csv:
-           all_csv.remove('Master.csv')
-           os.remove('Master.csv')
-       df_from_each_file = (pd.read_csv(f) for f in all_csv)
-       concat_df = pd.concat(df_from_each_file, ignore_index=False, sort=False)
-       concat_df.to_csv('Master.csv', index=False)
+        all_csv = glob.glob(os.path.join(path, "*.csv"))
+        if 'Master.csv' in all_csv:
+            all_csv.remove('Master.csv')
+            os.remove('Master.csv')
+        df_from_each_file = (pd.read_csv(f) for f in all_csv)
+        concat_df = pd.concat(df_from_each_file, ignore_index=False, sort=False)
+        concat_df.to_csv('Master.csv', index=False)
     except Exception, err:
         print Exception, err
 
+
 def main():
-
-
     start = time.time()
     # Remove the rubbish columns
     append_all_csv(".")
     remove_columns('Master.csv')
     create_lifetime_in_days('Master.csv')
-    classify_created_at(    'Master.csv')
+    classify_created_at('Master.csv')
     remove_columns('Master.csv', ['created_at', 'state_changed_at', 'launched_at', 'deadline'])
     parse_json_category('Master.csv', 'category', 'slug')
     parse_json_creator('Master.csv')
     get_target_goal_percent('Master.csv')
-    #Can change where we want to do this, maybe we want stats on cancelled etc, to see how they skewed us
+    # Can change where we want to do this, maybe we want stats on cancelled etc, to see how they skewed us
     filter_success_failed('Master.csv')
     print calculate_var_mean_std('Master.csv', 'pledged %')
     print "Completed ", 'Master.csv'
