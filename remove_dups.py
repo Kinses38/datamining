@@ -30,7 +30,10 @@ def categorise_pledged(file_name):
 
     df = pd.read_csv(file_name, error_bad_lines=False)
     df = df.sort_values(by=['pledged %'])
-    df['pledged %'] = pd.cut(df['pledged %'], bins=[-1, 50, 100, 150, 99999], labels=['flop', 'fail', 'success', 'unicorn'])
+    # Changed to numerical labels for plotting. Also put infinte upper bound on it to include stupid pledges.
+    # df['pledged %'] = pd.cut(df['pledged %'], bins=[-1, 50, 100, 150, float("int")], labels=['flop', 'fail', 'success', 'unicorn'])
+    df['pledged %'] = pd.cut(df['pledged %'], bins=[-1, 50, 100, 150, float("inf")],
+                             labels=[0,1,2,3])
     df.to_csv('Cat_Master.csv', index=False)
     print "Completed changing pledged to categories in file " + file_name
 

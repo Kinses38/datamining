@@ -13,18 +13,6 @@ def observe():
     print "FUNC := observe \nDeduped_Master.csv row count: ", master_length
     results = {}
     for col in COLUMNS_TO_OBSERVE:
-        # print "Attribute: ", col
-        # results[col] = {
-        #     "min": df[col].min(),
-        #     "max": df[col].max(),
-        #     "mean": df[col].mean(),
-        #     "median": df[col].median(),
-        #     "Q1": df[col].quantile(0.25),
-        #     "Q2": df[col].quantile(0.50),
-        #     "Q3": df[col].quantile(0.75),
-        #     "Q4": df[col].quantile(1),
-        #     "std": df[col].std(),
-        #     "var": df[col].var()
         stats = pd.DataFrame([df[col].min(), df[col].max(), (df[col].max() - df[col].min()), df[col].mean(),
                               df[col].median(), df[col].quantile(0.25), df[col].quantile(0.5), df[col].quantile(0.75),
                               df[col].quantile(1), (df[col].quantile(0.75) - df[col].quantile(0.25)), df[col].std(),
@@ -35,7 +23,6 @@ def observe():
         print ("Atrribute: " + col)
         print (stats.to_string())
         print "\n"
-    # return results
 
 
 def output_to_file(data_dict, flag):
@@ -73,7 +60,8 @@ def output_to_file(data_dict, flag):
 
 
 def display_boxplot():
-    df = pd.read_csv("Deduped_Master.csv", error_bad_lines=False)  # capture data frame
+    # df = pd.read_csv("Deduped_Master.csv", error_bad_lines=False)  # capture data frame
+    df = pd.read_csv("Cat_Master.csv", error_bad_lines=False)
     # df.plot.box(vert=False, column=["pledged %", "state"])
     # df.boxplot(by='state', column = 'pledged %', grid=True)
     # df.boxplot(by='category', column='pledged %', grid=True)
@@ -107,7 +95,6 @@ def main():
     if dispersal:
         print "Running in disperal mode"
         observe()
-        # output_to_file(observe(), "dispersal")
     elif display:
         print "Displaying boxplot"
         display_boxplot()
