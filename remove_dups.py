@@ -12,20 +12,20 @@ def remove_dups(file_name):
 def trim(file_name):
     df = pd.read_csv(file_name, error_bad_lines=False)
     # for_pledged%
-    # df = df.sort_values(by=['pledged %'])
 
-    # df = df.iloc[1000:]
-    # df = df.iloc[:-9000]
+    df = df.sort_values(by=['pledged %'])
+    df = df.iloc[1000:]
+    df = df.iloc[:-9000]
 
     # for_goal
-    # df = df.sort_values(by=['goal'])
-    # df = df.iloc[1000:]
-    # df = df.iloc[:-6000]  # see screenshots of 5-number for this category
+    df = df.sort_values(by=['goal'])
+    df = df.iloc[1000:]
+    df = df.iloc[:-6000]  # see screenshots of 5-number for this category
 
     # for_for_backers_count
-    # df = df.sort_values(by=['backers_count'])
-    # df = df.iloc[3000:]
-    # df = df.iloc[:-5000]  # see screenshots of 5-number for this category
+    df = df.sort_values(by=['backers_count'])
+    df = df.iloc[3000:]
+    df = df.iloc[:-5000]  # see screenshots of 5-number for this category
     df.to_csv('Trimmed_Deduped_Master.csv', index=False)
     print "Completed trimming on file: " + file_name
 
