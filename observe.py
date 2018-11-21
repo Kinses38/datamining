@@ -75,6 +75,12 @@ def display_boxplot():
     plt.show()
 
 
+def display_heatmap(file_name):
+    df = pd.read_csv(file_name, error_bad_lines=False)
+    df = df.pivot_table("pledged %", "category", "country")
+    hm = sns.heatmap(df)
+    plt.show()
+
 def main():
     dispersal = True
     display = False
@@ -91,6 +97,9 @@ def main():
         elif sys.argv[1] == "dups":
             remove_dups = True
             dispersal = False
+        elif sys.argv[1] == "heatmap":
+            display_heatmap(sys.argv[2])
+
 
     if dispersal:
         print "Running in disperal mode"
