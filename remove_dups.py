@@ -46,7 +46,7 @@ def main():
     remove_dups("Master.csv")
     trim("Deduped_Master.csv")
 
-    # This is for non-trimmed.
+    # This is for non-trimmed. Need to add for trimmed if we want
     categorise_pledged("Deduped_Master.csv")
 
 
