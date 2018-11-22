@@ -107,7 +107,6 @@ def classify_created_at(c):
                 c.loc[c.index[index], 'quarter_created_at'] = 4
             else:
                 c.loc[c.index[index], 'quarter_created_at'] = "ERROR!"
-
             # fill year_created_at
             c.loc[c.index[index], 'year_created_at'] = created_at[0]
 
