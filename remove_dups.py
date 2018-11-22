@@ -31,7 +31,6 @@ def trim(file_name):
     df = df[df['goal'] >= 200]
     # filter projectss and return those with goals less than:
     df = df[df['goal'] <= 750000]
-
     df.to_csv('Trimmed_Deduped_Master.csv', index=False)
     print "Completed trimming on file: " + file_name
 
@@ -41,9 +40,11 @@ def categorise_pledged(file_name, output_file):
     df = pd.read_csv(file_name, error_bad_lines=False)
     df = df.sort_values(by=['pledged %'])
 
-    # Changed to numerical labels for plotting. Also put infinte upper bound on it to include stupid pledges.
-    df['pledged %'] = pd.cut(df['pledged %'], bins=[-1, 49, 99, 149, float("inf")],
-                             labels=[0, 1, 2, 3])
+    # Changed labels back to Strings for Classification. Put upper bound of 760,000
+    # as we are filtering anything above 750k
+    df['pledged %'] = pd.cut(df['pledged %'], bins=[-1, 50, 100, 150, 760000],
+                             labels=['flop', 'fail', 'success', 'unicorn'])
+    df = df.sort_values(by=['category'])
     df.to_csv(output_file, index=False)
     print "Completed changing pledged to categories in file: " + file_name + " to: " + output_file
 
