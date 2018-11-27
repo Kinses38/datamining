@@ -49,13 +49,20 @@ def categorise_pledged(file_name, output_file):
     print "Completed changing pledged to categories in file: " + file_name + " to: " + output_file
 
 
+def get_backer_generoristy(file_name, output_file):
+    df = pd.read_csv(file_name, error_bad_lines=False)
+    for index, row in df.iterrows():
+        if row['backers_count'] > 0:
+            backer_gen = (row['goal'] * (row['pledged %'] / 100)) / (row['backers_count'])
+        else:
+            backer_gen = 0;
+        df.loc[df.index[index], "backer_gen"] = backer_gen
+    df.to_csv(output_file, index=False)
+
 def main():
     remove_dups("Master.csv")
     trim("Deduped_Master.csv")
-
-    # This is for non-trimmed. Need to add for trimmed if we want
-    categorise_pledged("Deduped_Master.csv", "Cat_Master.csv")
-    # Trimmed
+    get_backer_generoristy('Trimmed_Deduped_Master.csv', 'Trimmed_Deduped_Master.csv')
     categorise_pledged("Trimmed_Deduped_Master.csv", "Trimmed_Cat_Master.csv")
 
 
