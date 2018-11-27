@@ -42,7 +42,7 @@ def categorise_pledged(file_name, output_file):
 
     # Changed labels back to Strings for Classification. Put upper bound of 760,000
     # as we are filtering anything above 750k
-    df['pledged %'] = pd.cut(df['pledged %'], bins=[-1, 50, 100, 150, 760000],
+    df['pledged %'] = pd.cut(df['pledged %'], bins=[-1, 25, 100, 150, 760000],
                              labels=['flop', 'fail', 'success', 'unicorn'])
     df = df.sort_values(by=['category'])
     df.to_csv(output_file, index=False)
