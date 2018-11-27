@@ -10,7 +10,7 @@ def remove_training_from_test_duplicates(train_file_name, test_file_name):
 
 def main():
 
-    remove_training_from_test_duplicates('Trimmed_Cat_Master.csv', 'Testing_Set.csv')
+    remove_training_from_test_duplicates('Final_Training_Set.csv', 'Testing_Set.csv')
 
 
 if __name__ == "__main__":
